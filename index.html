@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canevas de Préparation - Animation Scientifique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 5px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #999;
+            padding-bottom: 10px;
+            margin: 20px 0 15px 0;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group.full {
+            grid-template-columns: 1fr;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-family: Arial, sans-serif;
+            font-size: 0.95em;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .table-section {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th {
+            background: #e0e0e0;
+            color: #000;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #999;
+            font-size: 0.9em;
+        }
+
+        td {
+            padding: 10px 12px;
+            border: 1px solid #999;
+        }
+
+        td input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        .add-row-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .add-row-btn:hover {
+            background-color: #555;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #generateBtn {
+            background: #333;
+            color: white;
+        }
+
+        #generateBtn:hover {
+            background: #555;
+        }
+
+        #printBtn {
+            background-color: #0066cc;
+            color: white;
+            display: none;
+        }
+
+        #printBtn:hover {
+            background-color: #0052a3;
+        }
+
+        #resetBtn {
+            background-color: #666;
+            color: white;
+        }
+
+        #resetBtn:hover {
+            background-color: #888;
+        }
+
+        .remove-btn {
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .remove-btn:hover {
+            background-color: #990000;
+        }
+
+        /* STYLES POUR L'APERÇU */
+        .preview {
+            display: none;
+            background: white;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .preview.active {
+            display: block;
+        }
+
+        .document-print {
+            background: white;
+            padding: 40px;
+        }
+
+        .document-print h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+
+        .document-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .document-table th {
+            background: #e0e0e0;
+            color: #000;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #000;
+        }
+
+        .document-table td {
+            padding: 12px;
+            border: 1px solid #000;
+            vertical-align: top;
+        }
+
+        .row-label {
+            font-weight: bold;
+            width: 25%;
+            background: #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            background: #e0e0e0;
+            padding: 12px;
+            border: 1px solid #000;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .subsection-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .subsection-table th {
+            background: #f0f0f0;
+            color: #000;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #000;
+        }
+
+        .subsection-table td {
+            padding: 10px;
+            border: 1px solid #000;
+            vertical-align: top;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .form-section {
+                display: none;
+            }
+            .preview {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h1>Canevas de Préparation d'une Séance d'Animation Scientifique</h1>
+
+            <form id="canevasForm">
+                <!-- SECTION 1: INFORMATIONS GÉNÉRALES -->
+                <h2>1. Informations Générales</h2>
+                <div class="form-group full">
+                    <label for="theme">Thème choisi</label>
+                    <input type="text" id="theme" name="theme" placeholder="Ex: L'eau, L'énergie, La biodiversité" required>
+                </div>
+                <div class="form-group">
+                    <label for="duree">Durée (en heures)</label>
+                    <input type="number" id="duree" name="duree" value="2" min="0.5" step="0.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="participants">Nombre de participants</label>
+                    <input type="number" id="participants" name="participants" placeholder="Ex: 25" required>
+                </div>
+                <div class="form-group full">
+                    <label for="animateurs">Animateurs (2 à 4 personnes)</label>
+                    <input type="text" id="animateurs" name="animateurs" placeholder="Ex: Jean Dupont, Marie Martin" required>
+                </div>
+
+                <!-- SECTION 2: OBJECTIFS PÉDAGOGIQUES -->
+                <h2>2. Objectifs Pédagogiques</h2>
+                <div class="form-group full">
+                    <label for="objectifGeneral">Objectif général</label>
+                    <textarea id="objectifGeneral" name="objectifGeneral" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label>Objectifs spécifiques (au moins 2)</label>
+                    <div id="objectifsContainer">
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" class="objectif-input" placeholder="Objectif spécifique 1" required>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" class="objectif-input" placeholder="Objectif spécifique 2" required>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" class="objectif-input" placeholder="Objectif spécifique 3 (optionnel)">
+                        </div>
+                    </div>
+                    <button type="button" class="add-row-btn" onclick="addObjectif()">+ Ajouter un objectif</button>
+                </div>
+
+                <!-- SECTION 3: JEUX DE PLEIN AIR -->
+                <h2>3. Jeux de Plein Air Retenus</h2>
+                <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Nom du jeu</th>
+                                <th>Objectif visé</th>
+                                <th>Références de la fiche</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jeuxBody">
+                            <tr class="jeu-row">
+                                <td>1</td>
+                                <td><input type="text" placeholder="Nom du jeu" class="jeu-nom"></td>
+                                <td><input type="text" placeholder="Objectif visé" class="jeu-objectif"></td>
+                                <td><input type="text" placeholder="Référence" class="jeu-reference"></td>
+                                <td><button type="button" class="remove-btn" onclick="removeJeu(this)">Supprimer</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-row-btn" onclick="addJeu()">+ Ajouter un jeu</button>
+                </div>
+
+                <!-- SECTION 4: EXPÉRIENCES SCIENTIFIQUES -->
+                <h2>4. Expériences Scientifiques Retenues</h2>
+                <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Titre de l'expérience</th>
+                                <th>Référence au livret</th>
+                                <th>Objectif visé</th>
+                                <th>Matériel nécessaire</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="experiencesBody">
+                            <tr class="experience-row">
+                                <td>1</td>
+                                <td><input type="text" placeholder="Titre" class="exp-titre"></td>
+                                <td><input type="text" placeholder="Référence" class="exp-reference"></td>
+                                <td><input type="text" placeholder="Objectif" class="exp-objectif"></td>
+                                <td><input type="text" placeholder="Matériel" class="exp-materiel"></td>
+                                <td><button type="button" class="remove-btn" onclick="removeExperience(this)">Supprimer</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-row-btn" onclick="addExperience()">+ Ajouter une expérience</button>
+                </div>
+
+                <!-- SECTION 5: SCÉNARISATION -->
+                <h2>5. Scénarisation de la Séance</h2>
+                <div class="form-group full">
+                    <label for="miseContexte">Mise en contexte (défi, énigme, mission, histoire...)</label>
+                    <textarea id="miseContexte" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="enchainement">Enchaînement des jeux et expériences</label>
+                    <textarea id="enchainement" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="rolesEleves">Rôle attribué aux élèves (chercheurs, enquêteurs, rapporteurs...)</label>
+                    <textarea id="rolesEleves" required></textarea>
+                </div>
+
+                <!-- SECTION 6: ORGANISATION PRATIQUE -->
+                <h2>6. Organisation Pratique</h2>
+                <div class="form-group full">
+                    <label for="repartitionRoles">Répartition des rôles entre élèves</label>
+                    <textarea id="repartitionRoles" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="modeTravail">Mode de travail prévu (binômes, sous-groupes, plénière)</label>
+                    <textarea id="modeTravail" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="consignesGenerales">Consignes générales aux élèves</label>
+                    <textarea id="consignesGenerales" required></textarea>
+                </div>
+
+                <!-- SECTION 7: DÉROULEMENT SYNTHÉTIQUE -->
+                <h2>7. Déroulement Synthétique de la Séance</h2>
+                <div class="form-group full">
+                    <label for="avant">Avant (mise en situation, présentation du défi/mission)</label>
+                    <textarea id="avant" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="pendant">Pendant (jeux de plein air, expérimentations, observations, échanges)</label>
+                    <textarea id="pendant" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="apres">Après (restitution, conclusion, ouverture)</label>
+                    <textarea id="apres" required></textarea>
+                </div>
+
+                <!-- SECTION 8: POINTS DE VIGILANCE -->
+                <h2>8. Points de Vigilance</h2>
+                <div class="form-group full">
+                    <label for="securite">Sécurité</label>
+                    <textarea id="securite" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="gestionTemps">Gestion du temps</label>
+                    <textarea id="gestionTemps" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="repartitionParole">Répartition de la parole et participation</label>
+                    <textarea id="repartitionParole" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="adaptationNiveau">Adaptation au niveau des élèves</label>
+                    <textarea id="adaptationNiveau" required></textarea>
+                </div>
+
+                <!-- SECTION 9: ÉVALUATION -->
+                <h2>9. Évaluation et Feedback</h2>
+                <div class="form-group full">
+                    <label for="indicateurs">Indicateurs de réussite</label>
+                    <textarea id="indicateurs" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="ameliorations">Améliorations possibles</label>
+                    <textarea id="ameliorations" required></textarea>
+                </div>
+                <div class="form-group full">
+                    <label for="synthese">Temps réservé aux élèves pour rédiger une fiche de synthèse</label>
+                    <textarea id="synthese" required></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" id="generateBtn" onclick="generatePreview()">Générer le Tableau</button>
+                    <button type="button" id="printBtn" onclick="printDocument()">Imprimer / PDF</button>
+                    <button type="reset" id="resetBtn">Réinitialiser</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="preview" id="preview"></div>
+    </div>
+
+    <script>
+        function addObjectif() {
+            const container = document.getElementById('objectifsContainer');
+            const div = document.createElement('div');
+            div.style.marginBottom = '10px';
+            div.innerHTML = '<input type="text" class="objectif-input" placeholder="Objectif spécifique">';
+            container.appendChild(div);
+        }
+
+        function addJeu() {
+            const tbody = document.getElementById('jeuxBody');
+            const rowCount = tbody.querySelectorAll('.jeu-row').length + 1;
+            const row = document.createElement('tr');
+            row.className = 'jeu-row';
+            row.innerHTML = `
+                <td>${rowCount}</td>
+                <td><input type="text" placeholder="Nom du jeu" class="jeu-nom"></td>
+                <td><input type="text" placeholder="Objectif visé" class="jeu-objectif"></td>
+                <td><input type="text" placeholder="Référence" class="jeu-reference"></td>
+                <td><button type="button" class="remove-btn" onclick="removeJeu(this)">Supprimer</button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function removeJeu(btn) {
+            btn.closest('.jeu-row').remove();
+            updateJeuNumbers();
+        }
+
+        function updateJeuNumbers() {
+            const rows = document.querySelectorAll('.jeu-row');
+            rows.forEach((row, index) => {
+                row.querySelector('td').textContent = index + 1;
+            });
+        }
+
+        function addExperience() {
+            const tbody = document.getElementById('experiencesBody');
+            const rowCount = tbody.querySelectorAll('.experience-row').length + 1;
+            const row = document.createElement('tr');
+            row.className = 'experience-row';
+            row.innerHTML = `
+                <td>${rowCount}</td>
+                <td><input type="text" placeholder="Titre" class="exp-titre"></td>
+                <td><input type="text" placeholder="Référence" class="exp-reference"></td>
+                <td><input type="text" placeholder="Objectif" class="exp-objectif"></td>
+                <td><input type="text" placeholder="Matériel" class="exp-materiel"></td>
+                <td><button type="button" class="remove-btn" onclick="removeExperience(this)">Supprimer</button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function removeExperience(btn) {
+            btn.closest('.experience-row').remove();
+            updateExperienceNumbers();
+        }
+
+        function updateExperienceNumbers() {
+            const rows = document.querySelectorAll('.experience-row');
+            rows.forEach((row, index) => {
+                row.querySelector('td').textContent = index + 1;
+            });
+        }
+
+        function generatePreview() {
+            const data = {
+                theme: document.getElementById('theme').value,
+                duree: document.getElementById('duree').value,
+                participants: document.getElementById('participants').value,
+                animateurs: document.getElementById('animateurs').value,
+                objectifGeneral: document.getElementById('objectifGeneral').value,
+                objectifs: Array.from(document.querySelectorAll('.objectif-input')).map(e => e.value).filter(v => v),
+                jeux: Array.from(document.querySelectorAll('.jeu-row')).map(row => ({
+                    nom: row.querySelector('.jeu-nom').value,
+                    objectif: row.querySelector('.jeu-objectif').value,
+                    reference: row.querySelector('.jeu-reference').value
+                })).filter(j => j.nom),
+                experiences: Array.from(document.querySelectorAll('.experience-row')).map(row => ({
+                    titre: row.querySelector('.exp-titre').value,
+                    reference: row.querySelector('.exp-reference').value,
+                    objectif: row.querySelector('.exp-objectif').value,
+                    materiel: row.querySelector('.exp-materiel').value
+                })).filter(e => e.titre),
+                miseContexte: document.getElementById('miseContexte').value,
+                enchainement: document.getElementById('enchainement').value,
+                rolesEleves: document.getElementById('rolesEleves').value,
+                repartitionRoles: document.getElementById('repartitionRoles').value,
+                modeTravail: document.getElementById('modeTravail').value,
+                consignesGenerales: document.getElementById('consignesGenerales').value,
+                avant: document.getElementById('avant').value,
+                pendant: document.getElementById('pendant').value,
+                apres: document.getElementById('apres').value,
+                securite: document.getElementById('securite').value,
+                gestionTemps: document.getElementById('gestionTemps').value,
+                repartitionParole: document.getElementById('repartitionParole').value,
+                adaptationNiveau: document.getElementById('adaptationNiveau').value,
+                indicateurs: document.getElementById('indicateurs').value,
+                ameliorations: document.getElementById('ameliorations').value,
+                synthese: document.getElementById('synthese').value
+            };
+
+            let html = `
+                <div class="document-print">
+                    <h1>CANEVAS DE PRÉPARATION - ANIMATION SCIENTIFIQUE</h1>
+
+                    <div class="section-title">1. INFORMATIONS GÉNÉRALES</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Thème choisi</td><td>${data.theme}</td></tr>
+                        <tr><td class="row-label">Durée</td><td>${data.duree} heure(s)</td></tr>
+                        <tr><td class="row-label">Nombre de participants</td><td>${data.participants}</td></tr>
+                        <tr><td class="row-label">Animateurs</td><td>${data.animateurs}</td></tr>
+                    </table>
+
+                    <div class="section-title">2. OBJECTIFS PÉDAGOGIQUES</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Objectif général</td><td>${data.objectifGeneral}</td></tr>
+                        <tr><td class="row-label">Objectifs spécifiques</td><td>${data.objectifs.map((obj, i) => `${i+1}. ${obj}`).join('<br>')}</td></tr>
+                    </table>
+
+                    <div class="section-title">3. JEUX DE PLEIN AIR RETENUS</div>
+                    <table class="subsection-table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Nom du jeu</th>
+                                <th>Objectif visé</th>
+                                <th>Références de la fiche</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.jeux.length > 0 ? data.jeux.map((jeu, i) => `
+                                <tr>
+                                    <td>${i+1}</td>
+                                    <td>${jeu.nom}</td>
+                                    <td>${jeu.objectif}</td>
+                                    <td>${jeu.reference}</td>
+                                </tr>
+                            `).join('') : '<tr><td colspan="4">Aucun jeu saisi</td></tr>'}
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">4. EXPÉRIENCES SCIENTIFIQUES RETENUES</div>
+                    <table class="subsection-table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Titre de l'expérience</th>
+                                <th>Référence au livret</th>
+                                <th>Objectif visé</th>
+                                <th>Matériel nécessaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.experiences.length > 0 ? data.experiences.map((exp, i) => `
+                                <tr>
+                                    <td>${i+1}</td>
+                                    <td>${exp.titre}</td>
+                                    <td>${exp.reference}</td>
+                                    <td>${exp.objectif}</td>
+                                    <td>${exp.materiel}</td>
+                                </tr>
+                            `).join('') : '<tr><td colspan="5">Aucune expérience saisie</td></tr>'}
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">5. SCÉNARISATION DE LA SÉANCE</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Mise en contexte</td><td>${data.miseContexte}</td></tr>
+                        <tr><td class="row-label">Enchaînement des jeux et expériences</td><td>${data.enchainement}</td></tr>
+                        <tr><td class="row-label">Rôle attribué aux élèves</td><td>${data.rolesEleves}</td></tr>
+                    </table>
+
+                    <div class="section-title">6. ORGANISATION PRATIQUE</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Répartition des rôles entre élèves</td><td>${data.repartitionRoles}</td></tr>
+                        <tr><td class="row-label">Mode de travail prévu</td><td>${data.modeTravail}</td></tr>
+                        <tr><td class="row-label">Consignes générales aux élèves</td><td>${data.consignesGenerales}</td></tr>
+                    </table>
+
+                    <div class="section-title">7. DÉROULEMENT SYNTHÉTIQUE DE LA SÉANCE</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Avant</td><td>${data.avant}</td></tr>
+                        <tr><td class="row-label">Pendant</td><td>${data.pendant}</td></tr>
+                        <tr><td class="row-label">Après</td><td>${data.apres}</td></tr>
+                    </table>
+
+                    <div class="section-title">8. POINTS DE VIGILANCE</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Sécurité</td><td>${data.securite}</td></tr>
+                        <tr><td class="row-label">Gestion du temps</td><td>${data.gestionTemps}</td></tr>
+                        <tr><td class="row-label">Répartition de la parole et participation</td><td>${data.repartitionParole}</td></tr>
+                        <tr><td class="row-label">Adaptation au niveau des élèves</td><td>${data.adaptationNiveau}</td></tr>
+                    </table>
+
+                    <div class="section-title">9. ÉVALUATION ET FEEDBACK</div>
+                    <table class="document-table">
+                        <tr><td class="row-label">Indicateurs de réussite</td><td>${data.indicateurs}</td></tr>
+                        <tr><td class="row-label">Améliorations possibles</td><td>${data.ameliorations}</td></tr>
+                        <tr><td class="row-label">Temps réservé aux élèves pour la synthèse</td><td>${data.synthese}</td></tr>
+                    </table>
+                </div>
+            `;
+
+            const previewDiv = document.getElementById('preview');
+            previewDiv.innerHTML = html;
+            previewDiv.classList.add('active');
+            document.getElementById('printBtn').style.display = 'block';
+
+            setTimeout(() => {
+                previewDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function printDocument() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
